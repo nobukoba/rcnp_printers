@@ -60,7 +60,7 @@ ofile.close()
 
 ofile = open('./status/drm_'+printer_name+'.txt','a')
 ofile.write(utime+' '+dtime)
-for i in range(0,4):
+for i in range(0,5):
     ofile.write(' '+drm[i])
 ofile.write('\n')
 ofile.close()

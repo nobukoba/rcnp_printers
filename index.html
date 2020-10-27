@@ -25,28 +25,48 @@
 	      [15, 'h6c4476',  0],
 	      [16, 'g1c2250',  0]
 	  ];
+	  
 	  for (let pri of printers) {
-	      url = 'http://www.rcnp.osaka-u.ac.jp/~kobayash/rcnp_printers/status/tnr_per_'+pri[1]+'.txt';
-	      fetch(url)
-		  .then((response) => response.text())
-		  .then((text) => draw(pri[0],pri[1],pri[2],text))
-		  .catch((error) => console.log(error));
+	      //url = 'http://www.rcnp.osaka-u.ac.jp/~kobayash/rcnp_printers/status/tnr_per_'+pri[1]+'.txt';
+	      //let request = new XMLHttpRequest();
+	      //request.onreadystatechange = function(){
+	      //	  if (request.readyState == 4){
+	      //	      if (request.status == 200){
+	      //		  let data = request.responseText;
+	      //		  console.log(data);
+	      //		  draw(pri[0],pri[1],pri[2],data);
+	      //	      }
+	      //	  }
+	      //}
+	      //request.open('GET', url, true);
+	      //request.send(null);	      
+	      
+	      url_tnr = 'http://www.rcnp.osaka-u.ac.jp/~kobayash/rcnp_printers/status/tnr_per_'+pri[1]+'.txt';
+	      fetch(url_tnr)
+	          .then((response) => response.text())
+	          .then((text) => draw_tnr(pri[0],pri[1],pri[2],text))
+	          .catch((error) => console.log(error));
+	      url_drm = 'http://www.rcnp.osaka-u.ac.jp/~kobayash/rcnp_printers/status/drm_'+pri[1]+'.txt';
+	      fetch(url_drm)
+	          .then((response) => response.text())
+	          .then((text) => draw_drm(pri[0],pri[1],pri[2],text))
+	          .catch((error) => console.log(error));
+	      
+	      url_btl = 'http://www.rcnp.osaka-u.ac.jp/~kobayash/rcnp_printers/status/btl_'+pri[1]+'.txt';
+	      fetch(url_btl)
+	          .then((response) => response.text())
+	          .then((text) => draw_btl(pri[0],pri[1],pri[2],text))
+	          .catch((error) => console.log(error));
 	  }
       };
-      function draw(num, pname, dbl_buf, text){
+      
+      function draw_tnr(num, pname, dbl_buf, text){
 	  var data_points = text;
 	  data_points     = data_points.replace(/,/g," ");
 	  var xy_paires   = data_points.split(/\r\n|\r|\n/);
-	  var xy_arr = [['x','black','cyan','magenta','yellow']];
-	  for (var i = 0; i < xy_paires.length; i++) {
-              var xy_points = xy_paires[i].split(/\s+/);
-              if (xy_points[0]!="" && xy_points[2]!="" && xy_points[3]!="" && xy_points[4]!="" && xy_points[5]!="") {
-		  xy_arr.push([new Date(Number(xy_points[0]) * 1000), Number(xy_points[2])+2, Number(xy_points[3]), Number(xy_points[4])-2, Number(xy_points[5])-4]);
-              }
-	  }
-	  var data = google.visualization.arrayToDataTable(xy_arr);
+	  
 	  var options = {
-	      'title': 'Printer #'+num+': '+pname,
+	      'title': 'Toner status of printer #'+num+': '+pname,
 	      vAxis: {
 		  viewWindow: {
 		      min: -5,
@@ -60,58 +80,380 @@
 	      pointSize: 3,
 	      explorer: {
 		  axis:'horizontal',
-		  maxZoomOut:20,
+		  maxZoomOut:0,
 		  maxZoomIn:100,
 		  keepInBounds: true
-	      },
-	      colors: ['black', '#008b8b', 'magenta', '#9b870c']
+	      }
 	  };
-	  var chart = new google.visualization.LineChart(document.getElementById('chart_div_'+num));
+	  
+	  var xy_arr;
+	  if (dbl_buf == 0) {
+	      options['colors'] = ['black', '#00cccc', 'magenta', '#ffa200'];
+	      xy_arr = [['x','black','cyan','magenta','yellow']];
+	      for (var i = 0; i < xy_paires.length; i++) {
+		  var xy_points = xy_paires[i].split(/\s+/);
+		  if (xy_points[0]!="" && xy_points[2]!="" && xy_points[3]!="" && xy_points[4]!="" && xy_points[5]!="") {
+		      xy_arr.push([new Date(Number(xy_points[0]) * 1000), Number(xy_points[2])+1, Number(xy_points[3]), Number(xy_points[4])-1, Number(xy_points[5])-2]);
+		  }
+	      }
+	  }else{
+	      options['colors'] = ['black', 'gray', '#00cccc', 'magenta', '#ffa200'];
+	      xy_arr = [['x','black_1','black_2','cyan','magenta','yellow']];
+	      for (var i = 0; i < xy_paires.length; i++) {
+		  var xy_points = xy_paires[i].split(/\s+/);
+		  if (xy_points[0]!="" && xy_points[2]!="" && xy_points[3]!="" && xy_points[4]!="" && xy_points[5]!="" && xy_points[6]!="") {
+		      xy_arr.push([new Date(Number(xy_points[0]) * 1000), Number(xy_points[2])+2, Number(xy_points[3])+1, Number(xy_points[4]), Number(xy_points[5])-1, Number(xy_points[6])-2]);
+		  }
+	      }
+	  }
+	  var data = google.visualization.arrayToDataTable(xy_arr);
+	  var chart = new google.visualization.LineChart(document.getElementById('chart_div_tnr_'+num));
 	  chart.draw(data,options);
       };
+
+      function draw_drm(num, pname, dbl_buf, text){
+	  var data_points = text;
+	  data_points     = data_points.replace(/,/g," ");
+	  var xy_paires   = data_points.split(/\r\n|\r|\n/);
+	  
+	  var options = {
+	      'title': 'Dram status of printer #'+num+': '+pname,
+	      vAxis: {
+		  viewWindow: {
+		      min: -1.,
+		      max: 10.5
+		  },
+		  ticks: [0, 2, 4, 6, 8, 10]
+	      },
+	      hAxis: {
+		  format: 'yyyy/MM/dd HH:mm'
+	      },
+	      pointSize: 3,
+	      explorer: {
+		  axis:'horizontal',
+		  maxZoomOut:0,
+		  maxZoomIn:100,
+		  keepInBounds: true
+	      }
+	  };
+	  
+	  var xy_arr;
+	  if (dbl_buf == 0) {
+	      options['colors'] = ['black', '#00cccc', 'magenta', '#ffa200'];
+	      xy_arr = [['x','black','cyan','magenta','yellow']];
+	      for (var i = 0; i < xy_paires.length; i++) {
+		  var xy_points = xy_paires[i].split(/\s+/);
+		  if (xy_points[0]!="" && xy_points[2]!="" && xy_points[3]!="" && xy_points[4]!="" && xy_points[5]!="") {
+		      xy_arr.push([new Date(Number(xy_points[0]) * 1000), Number(xy_points[2])+0.1, Number(xy_points[3]), Number(xy_points[4])-0.1, Number(xy_points[5])-0.2]);
+		  }
+	      }
+	  }else{
+	      options['colors'] = ['black', 'gray', '#00cccc', 'magenta', '#ffa200'];
+	      xy_arr = [['x','black_1','black_2','cyan','magenta','yellow']];
+	      for (var i = 0; i < xy_paires.length; i++) {
+		  var xy_points = xy_paires[i].split(/\s+/);
+		  if (xy_points[0]!="" && xy_points[2]!="" && xy_points[3]!="" && xy_points[4]!="" && xy_points[5]!="" && xy_points[6]!="") {
+		      xy_arr.push([new Date(Number(xy_points[0]) * 1000), Number(xy_points[2])+0.2, Number(xy_points[3])+0.1, Number(xy_points[4]), Number(xy_points[5])-0.1, Number(xy_points[6])-0.2]);
+		  }
+	      }
+	  }
+	  var data = google.visualization.arrayToDataTable(xy_arr);
+	  var chart = new google.visualization.LineChart(document.getElementById('chart_div_drm_'+num));
+	  chart.draw(data,options);
+      };
+
+      function draw_btl(num, pname, dbl_buf, text){
+	  var data_points = text;
+	  data_points     = data_points.replace(/,/g," ");
+	  var xy_paires   = data_points.split(/\r\n|\r|\n/);
+	  
+	  var options = {
+	      'title': 'Toner bottle status of printer #'+num+': '+pname,
+	      vAxis: {
+		  viewWindow: {
+		      min: -1.,
+		      max: 10.5
+		  },
+		  ticks: [0, 2, 4, 6, 8, 10]
+	      },
+	      hAxis: {
+		  format: 'yyyy/MM/dd HH:mm'
+	      },
+	      pointSize: 3,
+	      explorer: {
+		  axis:'horizontal',
+		  maxZoomOut:0,
+		  maxZoomIn:100,
+		  keepInBounds: true
+	      }
+	  };
+	  
+	  options['colors'] = ['black'];
+	  var xy_arr = [['x','Bottle']];
+	  for (var i = 0; i < xy_paires.length; i++) {
+	      var xy_points = xy_paires[i].split(/\s+/);
+	      if (xy_points[0]!="" && xy_points[2]!="" && xy_points[3]!="") {
+		  xy_arr.push([new Date(Number(xy_points[0]) * 1000), Number(xy_points[2])]);
+	      }
+	  }
+	  var data = google.visualization.arrayToDataTable(xy_arr);
+	  var chart = new google.visualization.LineChart(document.getElementById('chart_div_btl_'+num));
+	  chart.draw(data,options);
+      };
+      
+      
     </script>
     <title>Toner monitor for RCNP printers</title>
   </head>
   <body>
 
     <h1>Toner monitor for RCNP printers</h1>
+    <h2>Drawn by Google Chart Tools</h2>
     <table border="0">
       <tr>
-	<td><div id="chart_div_1"  style="width: 600px; height: 300px;">No printer</div></td>
-	<td><div id="chart_div_2"  style="width: 600px; height: 300px;">No printer</div></td>
+	<td>
+	  <a href="http://acc4150.rcnp.osaka-u.ac.jp/">ACC4150 status</a> / 
+	  <a href="http://acc4150.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	</td><td></td><td></td>
       </tr>
       <tr>
-	<td><div id="chart_div_3"  style="width: 600px; height: 300px;">No printer</div></td>
-	<td><div id="chart_div_4"  style="width: 600px; height: 300px;">No printer</div></td>
+	<td><div id="chart_div_tnr_1"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_1"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_1"  style="width: 500px; height: 400px;">No printer</div></td>
       </tr>
       <tr>
-	<td><div id="chart_div_5"  style="width: 600px; height: 300px;">No printer</div></td>
-	<td><div id="chart_div_6"  style="width: 600px; height: 300px;">No printer</div></td>
+	<td>
+	  <a href="http://acc5585.rcnp.osaka-u.ac.jp/">ACC5585 status</a> / 
+	  <a href="http://acc5585.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	</td><td></td><td></td>
+      </tr>
+       <tr>
+	<td><div id="chart_div_tnr_2"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_2"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_2"  style="width: 500px; height: 400px;">No printer</div></td>
+       </tr>
+      <tr>
+	<td>
+	  <a href="http://a2c2276.rcnp.osaka-u.ac.jp/">A2C2276 status</a> / 
+	  <a href="http://a2c2276.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	</td><td></td><td></td>
       </tr>
       <tr>
-	<td><div id="chart_div_7"  style="width: 600px; height: 300px;">No printer</div></td>
-	<td><div id="chart_div_8"  style="width: 600px; height: 300px;">No printer</div></td>
+	<td><div id="chart_div_tnr_3"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_3"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_3"  style="width: 500px; height: 400px;">No printer</div></td>
       </tr>
       <tr>
-	<td><div id="chart_div_9"  style="width: 600px; height: 300px;">No printer</div></td>
-	<td><div id="chart_div_10" style="width: 600px; height: 300px;">No printer</div></td>
+	<td>
+	  <a href="http://a2c3540.rcnp.osaka-u.ac.jp/">A2C3540 status</a> / 
+	  <a href="http://a2c3540.rcnp.osaka-u.ac.jp/sttnr.htm">Toner</a> / 
+	  <a href="http://a2c3540.rcnp.osaka-u.ac.jp/stdrm.htm">Dram</a> / 
+	  <a href="http://a2c3540.rcnp.osaka-u.ac.jp/stbot.htm">Bottle</a>
+	</td><td></td><td></td>
       </tr>
       <tr>
-	<td><div id="chart_div_11" style="width: 600px; height: 300px;">No printer</div></td>
-	<td><div id="chart_div_12" style="width: 600px; height: 300px;">No printer</div></td>
+	<td><div id="chart_div_tnr_4"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_4"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_4"  style="width: 500px; height: 400px;">No printer</div></td>
       </tr>
       <tr>
-	<td><div id="chart_div_13" style="width: 600px; height: 300px;">No printer</div></td>
-	<td><div id="chart_div_14" style="width: 600px; height: 300px;">No printer</div></td>
+	<td>
+	  <a href="http://a3c4476.rcnp.osaka-u.ac.jp/">A3C4476 status</a> / 
+	  <a href="http://a3c4476.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	</td><td></td><td></td>
       </tr>
       <tr>
-	<td><div id="chart_div_15" style="width: 600px; height: 300px;">No printer</div></td>
-	<td></td>
+	<td><div id="chart_div_tnr_5"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_5"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_5"  style="width: 500px; height: 400px;">No printer</div></td>
+      </tr>
+      <tr>
+	<td>
+	  <a href="http://ri1c2250.rcnp.osaka-u.ac.jp/">RI1C2250 status</a> / 
+	  <a href="http://ri1c2250.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	</td><td></td><td></td>
+      </tr>
+      <tr>
+	<td><div id="chart_div_tnr_6"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_6"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_6"  style="width: 500px; height: 400px;">No printer</div></td>
+      </tr>
+      <tr>
+	<td>
+	  <a href="http://rbc4150.rcnp.osaka-u.ac.jp/">RBC4150 status</a> / 
+	  <a href="http://rbc4150.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	</td><td></td><td></td>
+      </tr>
+      <tr>
+	<td><div id="chart_div_tnr_7"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_7"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_7"  style="width: 500px; height: 400px;">No printer</div></td>
+      </tr>
+      <tr>
+	<td>
+	  <a href="http://rcc4000a.rcnp.osaka-u.ac.jp/">RCC4000A status</a> / 
+	  <a href="http://rcc4000a.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	</td><td></td><td></td>
+      </tr>
+      <tr>
+	<td><div id="chart_div_tnr_8"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_8"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_8"  style="width: 500px; height: 400px;">No printer</div></td>
+      </tr>
+      <tr>
+	<td>
+	  <a href="http://rcc4000b.rcnp.osaka-u.ac.jp/">RCC4000B status</a> / 
+	  <a href="http://rcc4000b.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	</td><td></td><td></td>
+      </tr>
+      <tr>
+	<td><div id="chart_div_tnr_9"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_9"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_9"  style="width: 500px; height: 400px;">No printer</div></td>
+      </tr>
+      <tr>
+	<td>
+	  <a href="http://h1c3540.rcnp.osaka-u.ac.jp/">H1C3540 status</a> / 
+	  <a href="http://h1c3540.rcnp.osaka-u.ac.jp/sttnr.htm">Toner</a> / 
+	  <a href="http://h1c3540.rcnp.osaka-u.ac.jp/stdrm.htm">Dram</a> / 
+	  <a href="http://h1c3540.rcnp.osaka-u.ac.jp/stbot.htm">Bottle</a>
+	</td><td></td><td></td>
+      </tr>
+      <tr>
+	<td><div id="chart_div_tnr_10"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_10"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_10"  style="width: 500px; height: 400px;">No printer</div></td>
+      </tr>
+      <tr>
+	<td>
+	  <a href="http://h2c3376.rcnp.osaka-u.ac.jp/">H2C3376 status</a> / 
+	  <a href="http://h2c3376.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	</td><td></td><td></td>
+      </tr>
+      <tr>
+	<td><div id="chart_div_tnr_11"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_11"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_11"  style="width: 500px; height: 400px;">No printer</div></td>
+      </tr>
+      <tr>
+	<td>
+	  <a href="http://h3c7785.rcnp.osaka-u.ac.jp/">H3C7785 status</a> / 
+	  <a href="http://h3c7785.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	</td><td></td><td></td>
+      </tr>
+      <tr>
+	<td><div id="chart_div_tnr_12"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_12"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_12"  style="width: 500px; height: 400px;">No printer</div></td>
+      </tr>
+      <tr>
+	<td>
+	  <a href="http://h4c7785.rcnp.osaka-u.ac.jp/">H4C7785 status</a> / 
+	  <a href="http://h4c7785.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	</td><td></td><td></td>
+      </tr>
+      <tr>
+	<td><div id="chart_div_tnr_13"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_13"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_13"  style="width: 500px; height: 400px;">No printer</div></td>
+      </tr>
+      <tr>
+	<td>
+	  <a href="http://h5c7785.rcnp.osaka-u.ac.jp/">H5C7785 status</a> / 
+	  <a href="http://h5c7785.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	</td><td></td><td></td>
+      </tr>
+      <tr>
+	<td><div id="chart_div_tnr_14"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_14"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_14"  style="width: 500px; height: 400px;">No printer</div></td>
+      </tr>
+      <tr>
+	<td>
+	  <a href="http://h6c4476.rcnp.osaka-u.ac.jp/"> H6C4476 status</a> / 
+	  <a href="http://h6c4476.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	</td><td></td><td></td>
+      </tr>
+      <tr>
+	<td><div id="chart_div_tnr_15"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_15"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_15"  style="width: 500px; height: 400px;">No printer</div></td>
+      </tr>
+      <tr>
+	<td>
+	  <a href="http://g1c2250.rcnp.osaka-u.ac.jp/">G1C2250 status</a> / 
+	  <a href="http://g1c2250.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	</td><td></td><td></td>
+      </tr>
+      <tr>
+	<td><div id="chart_div_tnr_16"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_drm_16"  style="width: 500px; height: 400px;">No printer</div></td>
+	<td><div id="chart_div_btl_16"  style="width: 500px; height: 400px;">No printer</div></td>
       </tr>
     </table>
-	
-    <a href="../index.html">Back to the Home Page</a>
-    <hr>
+
+    <h2>Raw data</h2>
+    <table>
+      <tr>
+	<td>
+	  <a href="./status/tnr_per_acc4150.txt" >./status/tnr_per_acc4150.txt</a> <br>
+	  <a href="./status/tnr_per_acc5585.txt" >./status/tnr_per_acc5585.txt</a> <br>
+	  <a href="./status/tnr_per_a2c2276.txt" >./status/tnr_per_a2c2276.txt</a> <br>
+	  <a href="./status/tnr_per_a2c3540.txt" >./status/tnr_per_a2c3540.txt</a> <br>
+	  <a href="./status/tnr_per_a3c4476.txt" >./status/tnr_per_a3c4476.txt</a> <br>
+	  <a href="./status/tnr_per_ri1c2250.txt">./status/tnr_per_ri1c2250.txt</a><br>
+	  <a href="./status/tnr_per_rbc4150.txt" >./status/tnr_per_rbc4150.txt</a> <br>
+	  <a href="./status/tnr_per_rcc4000a.txt">./status/tnr_per_rcc4000a.txt</a><br>
+	  <a href="./status/tnr_per_rcc4000b.txt">./status/tnr_per_rcc4000b.txt</a><br>
+	  <a href="./status/tnr_per_h1c3540.txt" >./status/tnr_per_h1c3540.txt</a> <br>
+	  <a href="./status/tnr_per_h2c3376.txt" >./status/tnr_per_h2c3376.txt</a> <br>
+	  <a href="./status/tnr_per_h3c7785.txt" >./status/tnr_per_h3c7785.txt</a> <br>
+	  <a href="./status/tnr_per_h4c7785.txt" >./status/tnr_per_h4c7785.txt</a> <br>
+	  <a href="./status/tnr_per_h5c7785.txt" >./status/tnr_per_h5c7785.txt</a> <br>
+	  <a href="./status/tnr_per_h6c4476.txt" >./status/tnr_per_h6c4476.txt</a> <br>
+	  <a href="./status/tnr_per_g1c2250.txt" >./status/tnr_per_g1c2250.txt</a> <br>
+	</td>
+	<td>
+	  <a href="./status/drm_acc4150.txt" >./status/drm_acc4150.txt</a> <br>
+	  <a href="./status/drm_acc5585.txt" >./status/drm_acc5585.txt</a> <br>
+	  <a href="./status/drm_a2c2276.txt" >./status/drm_a2c2276.txt</a> <br>
+	  <a href="./status/drm_a2c3540.txt" >./status/drm_a2c3540.txt</a> <br>
+	  <a href="./status/drm_a3c4476.txt" >./status/drm_a3c4476.txt</a> <br>
+	  <a href="./status/drm_ri1c2250.txt">./status/drm_ri1c2250.txt</a><br>
+	  <a href="./status/drm_rbc4150.txt" >./status/drm_rbc4150.txt</a> <br>
+	  <a href="./status/drm_rcc4000a.txt">./status/drm_rcc4000a.txt</a><br>
+	  <a href="./status/drm_rcc4000b.txt">./status/drm_rcc4000b.txt</a><br>
+	  <a href="./status/drm_h1c3540.txt" >./status/drm_h1c3540.txt</a> <br>
+	  <a href="./status/drm_h2c3376.txt" >./status/drm_h2c3376.txt</a> <br>
+	  <a href="./status/drm_h3c7785.txt" >./status/drm_h3c7785.txt</a> <br>
+	  <a href="./status/drm_h4c7785.txt" >./status/drm_h4c7785.txt</a> <br>
+	  <a href="./status/drm_h5c7785.txt" >./status/drm_h5c7785.txt</a> <br>
+	  <a href="./status/drm_h6c4476.txt" >./status/drm_h6c4476.txt</a> <br>
+	  <a href="./status/drm_g1c2250.txt" >./status/drm_g1c2250.txt</a> <br>
+	</td>
+	<td>
+	  <a href="./status/btl_acc4150.txt" >./status/btl_acc4150.txt</a> <br>
+	  <a href="./status/btl_acc5585.txt" >./status/btl_acc5585.txt</a> <br>
+	  <a href="./status/btl_a2c2276.txt" >./status/btl_a2c2276.txt</a> <br>
+	  <a href="./status/btl_a2c3540.txt" >./status/btl_a2c3540.txt</a> <br>
+	  <a href="./status/btl_a3c4476.txt" >./status/btl_a3c4476.txt</a> <br>
+	  <a href="./status/btl_ri1c2250.txt">./status/btl_ri1c2250.txt</a><br>
+	  <a href="./status/btl_rbc4150.txt" >./status/btl_rbc4150.txt</a> <br>
+	  <a href="./status/btl_rcc4000a.txt">./status/btl_rcc4000a.txt</a><br>
+	  <a href="./status/btl_rcc4000b.txt">./status/btl_rcc4000b.txt</a><br>
+	  <a href="./status/btl_h1c3540.txt" >./status/btl_h1c3540.txt</a> <br>
+	  <a href="./status/btl_h2c3376.txt" >./status/btl_h2c3376.txt</a> <br>
+	  <a href="./status/btl_h3c7785.txt" >./status/btl_h3c7785.txt</a> <br>
+	  <a href="./status/btl_h4c7785.txt" >./status/btl_h4c7785.txt</a> <br>
+	  <a href="./status/btl_h5c7785.txt" >./status/btl_h5c7785.txt</a> <br>
+	  <a href="./status/btl_h6c4476.txt" >./status/btl_h6c4476.txt</a> <br>
+	  <a href="./status/btl_g1c2250.txt" >./status/btl_g1c2250.txt</a> <br>
+	</td>
+      </tr>
+    </table>
+	  <hr>
+	  
+    <a href="../index.html">Back to the Home Page</a> <br>
     Nobu Kobaysahi, Oct. 25, 2020.
   </body>
 </html>
