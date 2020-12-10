@@ -41,18 +41,18 @@
 	      //request.open('GET', url, true);
 	      //request.send(null);	      
 	      
-	      url_tnr = 'http://www.rcnp.osaka-u.ac.jp/~kobayash/rcnp_printers/status/tnr_per_'+pri[1]+'.txt';
+	      url_tnr = 'https://www.rcnp.osaka-u.ac.jp/~kobayash/rcnp_printers/status/tnr_per_'+pri[1]+'.txt';
 	      fetch(url_tnr)
 	          .then((response) => response.text())
 	          .then((text) => draw_tnr(pri[0],pri[1],pri[2],text))
 	          .catch((error) => console.log(error));
-	      url_drm = 'http://www.rcnp.osaka-u.ac.jp/~kobayash/rcnp_printers/status/drm_'+pri[1]+'.txt';
+	      url_drm = 'https://www.rcnp.osaka-u.ac.jp/~kobayash/rcnp_printers/status/drm_'+pri[1]+'.txt';
 	      fetch(url_drm)
 	          .then((response) => response.text())
 	          .then((text) => draw_drm(pri[0],pri[1],pri[2],text))
 	          .catch((error) => console.log(error));
 	      
-	      url_btl = 'http://www.rcnp.osaka-u.ac.jp/~kobayash/rcnp_printers/status/btl_'+pri[1]+'.txt';
+	      url_btl = 'https://www.rcnp.osaka-u.ac.jp/~kobayash/rcnp_printers/status/btl_'+pri[1]+'.txt';
 	      fetch(url_btl)
 	          .then((response) => response.text())
 	          .then((text) => draw_btl(pri[0],pri[1],pri[2],text))
@@ -117,7 +117,7 @@
 	  var xy_paires   = data_points.split(/\r\n|\r|\n/);
 	  
 	  var options = {
-	      'title': 'Dram status of printer #'+num+': '+pname,
+	      'title': 'Drum status of printer #'+num+': '+pname,
 	      vAxis: {
 		  viewWindow: {
 		      min: -1.,
@@ -138,23 +138,12 @@
 	  };
 	  
 	  var xy_arr;
-	  if (dbl_buf == 0) {
-	      options['colors'] = ['black', '#00cccc', 'magenta', '#ffa200'];
-	      xy_arr = [['x','black','cyan','magenta','yellow']];
-	      for (var i = 0; i < xy_paires.length; i++) {
-		  var xy_points = xy_paires[i].split(/\s+/);
-		  if (xy_points[0]!="" && xy_points[2]!="" && xy_points[3]!="" && xy_points[4]!="" && xy_points[5]!="") {
-		      xy_arr.push([new Date(Number(xy_points[0]) * 1000), Number(xy_points[2])+0.1, Number(xy_points[3]), Number(xy_points[4])-0.1, Number(xy_points[5])-0.2]);
-		  }
-	      }
-	  }else{
-	      options['colors'] = ['black', 'gray', '#00cccc', 'magenta', '#ffa200'];
-	      xy_arr = [['x','black_1','black_2','cyan','magenta','yellow']];
-	      for (var i = 0; i < xy_paires.length; i++) {
-		  var xy_points = xy_paires[i].split(/\s+/);
-		  if (xy_points[0]!="" && xy_points[2]!="" && xy_points[3]!="" && xy_points[4]!="" && xy_points[5]!="" && xy_points[6]!="") {
-		      xy_arr.push([new Date(Number(xy_points[0]) * 1000), Number(xy_points[2])+0.2, Number(xy_points[3])+0.1, Number(xy_points[4]), Number(xy_points[5])-0.1, Number(xy_points[6])-0.2]);
-		  }
+	  options['colors'] = ['black', '#00cccc', 'magenta', '#ffa200'];
+	  xy_arr = [['x','black','cyan','magenta','yellow']];
+	  for (var i = 0; i < xy_paires.length; i++) {
+	      var xy_points = xy_paires[i].split(/\s+/);
+	      if (xy_points[0]!="" && xy_points[2]!="" && xy_points[3]!="" && xy_points[4]!="" && xy_points[5]!="") {
+		  xy_arr.push([new Date(Number(xy_points[0]) * 1000), Number(xy_points[2])+0.1, Number(xy_points[3]), Number(xy_points[4])-0.1, Number(xy_points[5])-0.2]);
 	      }
 	  }
 	  var data = google.visualization.arrayToDataTable(xy_arr);
@@ -212,7 +201,7 @@
     <table border="0">
       <tr>
 	<td>
-	  <a href="http://acc4150.rcnp.osaka-u.ac.jp/">ACC4150 status</a> / 
+	  <a href="http://acc4150.rcnp.osaka-u.ac.jp/">ACC4150 status (maintained by CN Gr.)</a> / 
 	  <a href="http://acc4150.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
 	</td><td></td><td></td>
       </tr>
@@ -223,7 +212,7 @@
       </tr>
       <tr>
 	<td>
-	  <a href="http://acc5585.rcnp.osaka-u.ac.jp/">ACC5585 status</a> / 
+	  <a href="http://acc5585.rcnp.osaka-u.ac.jp/">ACC5585 status (maintained by FX)</a> / 
 	  <a href="http://acc5585.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
 	</td><td></td><td></td>
       </tr>
@@ -234,7 +223,7 @@
        </tr>
       <tr>
 	<td>
-	  <a href="http://a2c2276.rcnp.osaka-u.ac.jp/">A2C2276 status</a> / 
+	  <a href="http://a2c2276.rcnp.osaka-u.ac.jp/">A2C2276 status (maintained by FX)</a> / 
 	  <a href="http://a2c2276.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
 	</td><td></td><td></td>
       </tr>
@@ -245,9 +234,9 @@
       </tr>
       <tr>
 	<td>
-	  <a href="http://a2c3540.rcnp.osaka-u.ac.jp/">A2C3540 status</a> / 
+	  <a href="http://a2c3540.rcnp.osaka-u.ac.jp/">A2C3540 status (maintained by CN Gr.)</a> / 
 	  <a href="http://a2c3540.rcnp.osaka-u.ac.jp/sttnr.htm">Toner</a> / 
-	  <a href="http://a2c3540.rcnp.osaka-u.ac.jp/stdrm.htm">Dram</a> / 
+	  <a href="http://a2c3540.rcnp.osaka-u.ac.jp/stdrm.htm">Drum</a> / 
 	  <a href="http://a2c3540.rcnp.osaka-u.ac.jp/stbot.htm">Bottle</a>
 	</td><td></td><td></td>
       </tr>
@@ -258,7 +247,7 @@
       </tr>
       <tr>
 	<td>
-	  <a href="http://a3c4476.rcnp.osaka-u.ac.jp/">A3C4476 status</a> / 
+	  <a href="http://a3c4476.rcnp.osaka-u.ac.jp/">A3C4476 status (maintained by FX)</a> / 
 	  <a href="http://a3c4476.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
 	</td><td></td><td></td>
       </tr>
@@ -269,7 +258,7 @@
       </tr>
       <tr>
 	<td>
-	  <a href="http://ri1c2250.rcnp.osaka-u.ac.jp/">RI1C2250 status</a> / 
+	  <a href="http://ri1c2250.rcnp.osaka-u.ac.jp/">RI1C2250 status (maintained by CN Gr.)</a> / 
 	  <a href="http://ri1c2250.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
 	</td><td></td><td></td>
       </tr>
@@ -280,7 +269,7 @@
       </tr>
       <tr>
 	<td>
-	  <a href="http://rbc4150.rcnp.osaka-u.ac.jp/">RBC4150 status</a> / 
+	  <a href="http://rbc4150.rcnp.osaka-u.ac.jp/">RBC4150 status (maintained by CN Gr.)</a> / 
 	  <a href="http://rbc4150.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
 	</td><td></td><td></td>
       </tr>
@@ -291,7 +280,7 @@
       </tr>
       <tr>
 	<td>
-	  <a href="http://rcc4000a.rcnp.osaka-u.ac.jp/">RCC4000A status</a> / 
+	  <a href="http://rcc4000a.rcnp.osaka-u.ac.jp/">RCC4000A status (maintained by CN Gr.)</a> / 
 	  <a href="http://rcc4000a.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
 	</td><td></td><td></td>
       </tr>
@@ -302,7 +291,7 @@
       </tr>
       <tr>
 	<td>
-	  <a href="http://rcc4000b.rcnp.osaka-u.ac.jp/">RCC4000B status</a> / 
+	  <a href="http://rcc4000b.rcnp.osaka-u.ac.jp/">RCC4000B status (maintained by CN Gr.)</a> / 
 	  <a href="http://rcc4000b.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
 	</td><td></td><td></td>
       </tr>
@@ -313,9 +302,9 @@
       </tr>
       <tr>
 	<td>
-	  <a href="http://h1c3540.rcnp.osaka-u.ac.jp/">H1C3540 status</a> / 
+	  <a href="http://h1c3540.rcnp.osaka-u.ac.jp/">H1C3540 status (maintained by CN Gr.)</a> / 
 	  <a href="http://h1c3540.rcnp.osaka-u.ac.jp/sttnr.htm">Toner</a> / 
-	  <a href="http://h1c3540.rcnp.osaka-u.ac.jp/stdrm.htm">Dram</a> / 
+	  <a href="http://h1c3540.rcnp.osaka-u.ac.jp/stdrm.htm">Drum</a> / 
 	  <a href="http://h1c3540.rcnp.osaka-u.ac.jp/stbot.htm">Bottle</a>
 	</td><td></td><td></td>
       </tr>
@@ -326,7 +315,7 @@
       </tr>
       <tr>
 	<td>
-	  <a href="http://h2c3376.rcnp.osaka-u.ac.jp/">H2C3376 status</a> / 
+	  <a href="http://h2c3376.rcnp.osaka-u.ac.jp/">H2C3376 status (maintained by FX)</a> / 
 	  <a href="http://h2c3376.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
 	</td><td></td><td></td>
       </tr>
@@ -337,7 +326,7 @@
       </tr>
       <tr>
 	<td>
-	  <a href="http://h3c7785.rcnp.osaka-u.ac.jp/">H3C7785 status</a> / 
+	  <a href="http://h3c7785.rcnp.osaka-u.ac.jp/">H3C7785 status (maintained by FX)</a> / 
 	  <a href="http://h3c7785.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
 	</td><td></td><td></td>
       </tr>
@@ -348,7 +337,7 @@
       </tr>
       <tr>
 	<td>
-	  <a href="http://h4c7785.rcnp.osaka-u.ac.jp/">H4C7785 status</a> / 
+	  <a href="http://h4c7785.rcnp.osaka-u.ac.jp/">H4C7785 status (maintained by FX)</a> / 
 	  <a href="http://h4c7785.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
 	</td><td></td><td></td>
       </tr>
@@ -359,7 +348,7 @@
       </tr>
       <tr>
 	<td>
-	  <a href="http://h5c7785.rcnp.osaka-u.ac.jp/">H5C7785 status</a> / 
+	  <a href="http://h5c7785.rcnp.osaka-u.ac.jp/">H5C7785 status (maintained by FX)</a> / 
 	  <a href="http://h5c7785.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
 	</td><td></td><td></td>
       </tr>
@@ -370,7 +359,7 @@
       </tr>
       <tr>
 	<td>
-	  <a href="http://h6c4476.rcnp.osaka-u.ac.jp/"> H6C4476 status</a> / 
+	  <a href="http://h6c4476.rcnp.osaka-u.ac.jp/"> H6C4476 status (maintained by FX)</a> / 
 	  <a href="http://h6c4476.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
 	</td><td></td><td></td>
       </tr>
@@ -381,7 +370,7 @@
       </tr>
       <tr>
 	<td>
-	  <a href="http://g1c2250.rcnp.osaka-u.ac.jp/">G1C2250 status</a> / 
+	  <a href="http://g1c2250.rcnp.osaka-u.ac.jp/">G1C2250 status (maintained by CN Gr.)</a> / 
 	  <a href="http://g1c2250.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
 	</td><td></td><td></td>
       </tr>
@@ -392,6 +381,9 @@
       </tr>
     </table>
 
+    <h2>Link</h2>
+    <a href="http://www.rcnp.osaka-u.ac.jp/Divisions/CN/info/printerplace.html">RCNP printers</a> <br>
+    <a href="http://www.rcnp.osaka-u.ac.jp/~togawa/PS/index.html">Status monitor</a> 
     <h2>Raw data</h2>
     <table>
       <tr>
