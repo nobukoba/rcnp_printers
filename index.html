@@ -4,9 +4,24 @@
     <Meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-      google.charts.load('current', {callback: readtext,
+      google.charts.load('current', {callback: first_draw,
 				     packages:['corechart']});
-      function readtext(){
+      function first_draw(){
+	  var today = new Date();
+	  var tmp = new Date();
+	  var last_month = new Date(tmp.setMonth(tmp.getMonth() - 3));
+	  Form1.date0.value = last_month.toISOString().substr(0, 10);
+	  Form1.date1.value = today.toISOString().substr(0, 10);
+	  draw_func(last_month, today);
+      }
+      function later_draw(){  
+	  var date0p = Date.parse(Form1.date0.value);
+	  var date1p = Date.parse(Form1.date1.value);
+	  var date0m = new Date(date0p);
+	  var date1m = new Date(date1p);
+	  draw_func(date0m, date1m);
+      }
+      function draw_func(date0, date1){
 	  var printers = [
 	      [1,  'acc4150',  0],   
 	      [2,  'acc5585',  1],   
@@ -44,23 +59,23 @@
 	      url_tnr = 'https://www.rcnp.osaka-u.ac.jp/~kobayash/rcnp_printers/status/tnr_per_'+pri[1]+'.txt';
 	      fetch(url_tnr)
 	          .then((response) => response.text())
-	          .then((text) => draw_tnr(pri[0],pri[1],pri[2],text))
+	          .then((text) => draw_tnr(pri[0],pri[1],pri[2],text,date0,date1))
 	          .catch((error) => console.log(error));
 	      url_drm = 'https://www.rcnp.osaka-u.ac.jp/~kobayash/rcnp_printers/status/drm_'+pri[1]+'.txt';
 	      fetch(url_drm)
 	          .then((response) => response.text())
-	          .then((text) => draw_drm(pri[0],pri[1],pri[2],text))
+	          .then((text) => draw_drm(pri[0],pri[1],pri[2],text,date0,date1))
 	          .catch((error) => console.log(error));
 	      
 	      url_btl = 'https://www.rcnp.osaka-u.ac.jp/~kobayash/rcnp_printers/status/btl_'+pri[1]+'.txt';
 	      fetch(url_btl)
 	          .then((response) => response.text())
-	          .then((text) => draw_btl(pri[0],pri[1],pri[2],text))
+	          .then((text) => draw_btl(pri[0],pri[1],pri[2],text,date0,date1))
 	          .catch((error) => console.log(error));
 	  }
       };
       
-      function draw_tnr(num, pname, dbl_buf, text){
+      function draw_tnr(num, pname, dbl_buf, text, date0, date1){
 	  var data_points = text;
 	  data_points     = data_points.replace(/,/g," ");
 	  var xy_paires   = data_points.split(/\r\n|\r|\n/);
@@ -75,7 +90,8 @@
 		  ticks: [0, 25, 50, 75, 100]
 	      },
 	      hAxis: {
-		  format: 'yyyy/MM/dd HH:mm'
+		  format: 'yyyy/MM/dd HH:mm',
+		  viewWindow: { min: date0, max: date1 }
 	      },
 	      pointSize: 3,
 	      explorer: {
@@ -111,7 +127,7 @@
 	  chart.draw(data,options);
       };
 
-      function draw_drm(num, pname, dbl_buf, text){
+      function draw_drm(num, pname, dbl_buf, text, date0, date1){
 	  var data_points = text;
 	  data_points     = data_points.replace(/,/g," ");
 	  var xy_paires   = data_points.split(/\r\n|\r|\n/);
@@ -126,7 +142,8 @@
 		  ticks: [0, 2, 4, 6, 8, 10]
 	      },
 	      hAxis: {
-		  format: 'yyyy/MM/dd HH:mm'
+		  format: 'yyyy/MM/dd HH:mm',
+		  viewWindow: { min: date0, max: date1 }
 	      },
 	      pointSize: 3,
 	      explorer: {
@@ -151,7 +168,7 @@
 	  chart.draw(data,options);
       };
 
-      function draw_btl(num, pname, dbl_buf, text){
+      function draw_btl(num, pname, dbl_buf, text, date0, date1){
 	  var data_points = text;
 	  data_points     = data_points.replace(/,/g," ");
 	  var xy_paires   = data_points.split(/\r\n|\r|\n/);
@@ -166,7 +183,8 @@
 		  ticks: [0, 2, 4, 6, 8, 10]
 	      },
 	      hAxis: {
-		  format: 'yyyy/MM/dd HH:mm'
+		  format: 'yyyy/MM/dd HH:mm',
+		  viewWindow: { min: date0, max: date1 }
 	      },
 	      pointSize: 3,
 	      explorer: {
@@ -195,9 +213,11 @@
     <title>Toner monitor for RCNP printers</title>
   </head>
   <body>
-
     <h1>Toner monitor for RCNP printers</h1>
     <h2>Drawn by Google Chart Tools</h2>
+    <form name="Form1" action="">
+      Date range: <input type="date" name="date0" onchange="later_draw()"> to  <input type="date" name="date1" onchange="later_draw()">
+    </form>
     <table border="0">
       <tr>
 	<td>
