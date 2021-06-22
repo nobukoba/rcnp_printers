@@ -103,6 +103,7 @@
 	  };
 	  
 	  var xy_arr;
+	  var last_time;
 	  if (dbl_buf == 0) {
 	      options['colors'] = ['black', '#00cccc', 'magenta', '#ffa200'];
 	      xy_arr = [['x','black','cyan','magenta','yellow']];
@@ -110,6 +111,7 @@
 		  var xy_points = xy_paires[i].split(/\s+/);
 		  if (xy_points[0]!="" && xy_points[2]!="" && xy_points[3]!="" && xy_points[4]!="" && xy_points[5]!="") {
 		      xy_arr.push([new Date(Number(xy_points[0]) * 1000), Number(xy_points[2])+1, Number(xy_points[3]), Number(xy_points[4])-1, Number(xy_points[5])-2]);
+		      last_time = xy_points[0];
 		  }
 	      }
 	  }else{
@@ -119,12 +121,19 @@
 		  var xy_points = xy_paires[i].split(/\s+/);
 		  if (xy_points[0]!="" && xy_points[2]!="" && xy_points[3]!="" && xy_points[4]!="" && xy_points[5]!="" && xy_points[6]!="") {
 		      xy_arr.push([new Date(Number(xy_points[0]) * 1000), Number(xy_points[2])+2, Number(xy_points[3])+1, Number(xy_points[4]), Number(xy_points[5])-1, Number(xy_points[6])-2]);
+		      last_time = xy_points[0];
 		  }
 	      }
 	  }
 	  var data = google.visualization.arrayToDataTable(xy_arr);
 	  var chart = new google.visualization.LineChart(document.getElementById('chart_div_tnr_'+num));
 	  chart.draw(data,options);
+	  var date = new Date() ;
+	  var date_time = date.getTime() ;
+	  if ((date_time - last_time*1000) < 3600*24*1000) {
+	      document.getElementById('last_date_'+num).textContent = 'Updated last night';
+	      document.getElementById('last_date_'+num).style.color = 'black';
+	  }
       };
 
       function draw_drm(num, pname, dbl_buf, text, date0, date1){
@@ -223,6 +232,7 @@
 	<td>
 	  <a href="http://acc4150.rcnp.osaka-u.ac.jp/">ACC4150 status (maintained by CN Gr.)</a> / 
 	  <a href="http://acc4150.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	  <div id="last_date_1" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
@@ -234,6 +244,7 @@
 	<td>
 	  <a href="http://acc5585.rcnp.osaka-u.ac.jp/">ACC5585 status (maintained by FX)</a> / 
 	  <a href="http://acc5585.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	  <div id="last_date_2" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
        <tr>
@@ -245,6 +256,7 @@
 	<td>
 	  <a href="http://a2c2276.rcnp.osaka-u.ac.jp/">A2C2276 status (maintained by FX)</a> / 
 	  <a href="http://a2c2276.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	  <div id="last_date_3" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
@@ -258,6 +270,7 @@
 	  <a href="http://a2c3540.rcnp.osaka-u.ac.jp/sttnr.htm">Toner</a> / 
 	  <a href="http://a2c3540.rcnp.osaka-u.ac.jp/stdrm.htm">Drum</a> / 
 	  <a href="http://a2c3540.rcnp.osaka-u.ac.jp/stbot.htm">Bottle</a>
+	  <div id="last_date_4" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
@@ -269,6 +282,7 @@
 	<td>
 	  <a href="http://a3c4476.rcnp.osaka-u.ac.jp/">A3C4476 status (maintained by FX)</a> / 
 	  <a href="http://a3c4476.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	  <div id="last_date_5" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
@@ -280,6 +294,7 @@
 	<td>
 	  <a href="http://ri1c2250.rcnp.osaka-u.ac.jp/">RI1C2250 status (maintained by CN Gr.)</a> / 
 	  <a href="http://ri1c2250.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	  <div id="last_date_6" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
@@ -291,6 +306,7 @@
 	<td>
 	  <a href="http://rbc4150.rcnp.osaka-u.ac.jp/">RBC4150 status (maintained by CN Gr.)</a> / 
 	  <a href="http://rbc4150.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	  <div id="last_date_7" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
@@ -302,6 +318,7 @@
 	<td>
 	  <a href="http://rcc4000a.rcnp.osaka-u.ac.jp/">RCC4000A status (maintained by CN Gr.)</a> / 
 	  <a href="http://rcc4000a.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	  <div id="last_date_8" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
@@ -313,6 +330,7 @@
 	<td>
 	  <a href="http://rcc4000b.rcnp.osaka-u.ac.jp/">RCC4000B status (maintained by CN Gr.)</a> / 
 	  <a href="http://rcc4000b.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	  <div id="last_date_9" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
@@ -326,6 +344,7 @@
 	  <a href="http://h1c3540.rcnp.osaka-u.ac.jp/sttnr.htm">Toner</a> / 
 	  <a href="http://h1c3540.rcnp.osaka-u.ac.jp/stdrm.htm">Drum</a> / 
 	  <a href="http://h1c3540.rcnp.osaka-u.ac.jp/stbot.htm">Bottle</a>
+	  <div id="last_date_10" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
@@ -337,6 +356,7 @@
 	<td>
 	  <a href="http://h2c3376.rcnp.osaka-u.ac.jp/">H2C3376 status (maintained by FX)</a> / 
 	  <a href="http://h2c3376.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	  <div id="last_date_11" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
@@ -348,6 +368,7 @@
 	<td>
 	  <a href="http://h3c7785.rcnp.osaka-u.ac.jp/">H3C7785 status (maintained by FX)</a> / 
 	  <a href="http://h3c7785.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	  <div id="last_date_12" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
@@ -359,6 +380,7 @@
 	<td>
 	  <a href="http://h4c7785.rcnp.osaka-u.ac.jp/">H4C7785 status (maintained by FX)</a> / 
 	  <a href="http://h4c7785.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	  <div id="last_date_13" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
@@ -370,6 +392,7 @@
 	<td>
 	  <a href="http://h5c7785.rcnp.osaka-u.ac.jp/">H5C7785 status (maintained by FX)</a> / 
 	  <a href="http://h5c7785.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	  <div id="last_date_14" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
@@ -381,6 +404,7 @@
 	<td>
 	  <a href="http://h6c4476.rcnp.osaka-u.ac.jp/"> H6C4476 status (maintained by FX)</a> / 
 	  <a href="http://h6c4476.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	  <div id="last_date_15" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
@@ -392,6 +416,7 @@
 	<td>
 	  <a href="http://g1c2250.rcnp.osaka-u.ac.jp/">G1C2250 status (maintained by CN Gr.)</a> / 
 	  <a href="http://g1c2250.rcnp.osaka-u.ac.jp/stsply.htm">Consumption page</a>
+	  <div id="last_date_16" style="color: red;">Not Updated last night</div>
 	</td><td></td><td></td>
       </tr>
       <tr>
