@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rcnp_printers_dir=${HOME}/nobukoba/rcnp_printers
+rcnp_printers_dir=${HOME}/HTMLpub/rcnp_printers
 pwd=${PWD}
 cd ${rcnp_printers_dir}
 
@@ -11,7 +11,7 @@ cd ${rcnp_printers_dir}
 ./a3c4476.py   
 ./ri1c2250.py  
 ./rbc4150.py   
-#./rcc4000a.py 
+./rcc4000a.py 
 ./rcc4000b.py  
 ./h1c3540.py   
 ./h2c3376.py   
