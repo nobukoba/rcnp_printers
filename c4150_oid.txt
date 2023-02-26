@@ -1,0 +1,22 @@
+SNMPv2-SMI::mib-2.43.11.1.1.6.1.1 = Hex-STRING: トナーカートリッジ(ブラック) 
+SNMPv2-SMI::mib-2.43.11.1.1.6.1.2 = Hex-STRING: トナーカートリッジ(イエロー) 
+SNMPv2-SMI::mib-2.43.11.1.1.6.1.3 = Hex-STRING: トナーカートリッジ(マゼンタ) 
+SNMPv2-SMI::mib-2.43.11.1.1.6.1.4 = Hex-STRING: トナーカートリッジ(シアン)  
+SNMPv2-SMI::mib-2.43.11.1.1.6.1.6 = Hex-STRING: ドラムカートリッジ(ブラック) 
+SNMPv2-SMI::mib-2.43.11.1.1.6.1.7 = Hex-STRING: ドラムカートリッジ(イエロー) 
+SNMPv2-SMI::mib-2.43.11.1.1.6.1.8 = Hex-STRING: ドラムカートリッジ(マゼンタ) 
+SNMPv2-SMI::mib-2.43.11.1.1.6.1.9 = Hex-STRING: ドラムカートリッジ(シアン)  
+
+.1.3.6.1.4.1.253.8.53.13.2.1.8.1.207.1  : Black Toner [K] Cartridge: Pre-Near Empty:{off(0), on(1)}
+.1.3.6.1.4.1.253.8.53.13.2.1.8.1.207.2  : Yellow Toner [Y] Cartridge: Pre-Near Empty:{off(0), on(1)}
+.1.3.6.1.4.1.253.8.53.13.2.1.8.1.207.3  : Magenta Toner [M] Cartridge: Pre-Near Empty:{off(0), on(1)}
+.1.3.6.1.4.1.253.8.53.13.2.1.8.1.207.4  : Cyan Toner [C] Cartridge: Pre-Near Empty:{off(0), on(1)}
+.1.3.6.1.4.1.253.8.53.13.2.1.8.1.207.5  : Waste Toner Container: Pre-Near Full:{off(0), on(1)}
+.1.3.6.1.4.1.253.8.53.13.2.1.8.1.207.6  : Black Drum Cartridge: Pre-Near Life End:{off(0), on(1)}
+.1.3.6.1.4.1.253.8.53.13.2.1.8.1.207.7  : Yellow Drum Cartridge: Pre-Near Life End:{off(0), on(1)}
+.1.3.6.1.4.1.253.8.53.13.2.1.8.1.207.8  : Magenta Drum Cartridge: Pre-Near Life End:{off(0), on(1)}
+.1.3.6.1.4.1.253.8.53.13.2.1.8.1.207.9  : Cyan Drum Cartridge: Pre-Near Life End:{off(0), on(1)}
+.1.3.6.1.4.1.253.8.53.13.2.1.8.1.207.10 : Bias Transfer Roll: Pre-Near Life End:{off(0), on(1)}
+.1.3.6.1.4.1.253.8.53.13.2.1.8.1.207.11 : Transfer Belt: Pre-Near Life End:{off(0), on(1)}
+.1.3.6.1.4.1.253.8.53.13.2.1.8.1.207.12 : Fuser Assembly: Pre-Near Life End:{off(0), on(1)}
+.1.3.6.1.4.1.253.8.53.13.2.1.8.1.207.17 : Transfer Belt Cleaner: Pre-Near Life End:{off(0), on(1)}
